@@ -1,73 +1,60 @@
-# React + TypeScript + Vite
+# proto64
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+proto64 is a web-based Protocol Buffers encoder/decoder in development, intended
+for composing message request payloads and converting between protobuf bytes and
+Base64 text.
 
-Currently, two official plugins are available:
+## Current status
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The app is currently a starter screen with a single **Click me** button. Schema
+loading, message selection, JSON input, protobuf encoding/decoding, and Base64
+conversion are **not implemented**. `protobufjs` and `b64u` are installed, but are
+not yet wired into the app.
 
-## React Compiler
+The planned scope is payload preparation and inspection, not sending requests.
+There is no request-sending or gRPC support.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Planned workflows
 
-## Expanding the ESLint configuration
+These workflows describe the intended functionality, not features available today:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Encode:** provide a `.proto` schema, select a message type, and compose JSON
+  data → encode it as protobuf bytes → convert those bytes to Base64 text for use
+  as a request payload outside the app.
+- **Decode:** provide a `.proto` schema and select the matching message type, then
+  supply Base64 text → convert it to protobuf bytes → decode the bytes into
+  structured message data for inspection.
 
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
+Both directions require the appropriate schema and message type to interpret the
+protobuf message correctly.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Stack
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+- React 19 and TypeScript, built with Vite.
+- Tailwind CSS 4 and shadcn/Base UI components for the interface.
+- `protobufjs` and `b64u` installed for the planned serialization and Base64 work.
+- ESLint for linting; pnpm for dependency management and scripts.
+
+## Development
+
+With Node.js compatible with Vite 8 and pnpm installed, run these commands from
+the project root:
+
+```sh
+pnpm install
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+`pnpm dev` starts the Vite development server; open the local URL it prints.
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
-
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```sh
+pnpm build
+pnpm lint
+pnpm preview
 ```
+
+- `pnpm build` runs the TypeScript build check and creates the production bundle
+  in `dist/` using Vite.
+- `pnpm lint` runs ESLint across the project.
+- `pnpm preview` serves the production bundle locally for inspection; run
+  `pnpm build` first. It is not a production deployment server.
