@@ -117,6 +117,76 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+:root {
+  color-scheme: light;
+  --background: #f5f7fa;
+  --foreground: #16283e;
+  --card: #ffffff;
+  --card-foreground: #16283e;
+  --popover: #f8fafc;
+  --popover-foreground: #16283e;
+  --primary: #086ca7;
+  --primary-foreground: #ffffff;
+  --secondary: #edf2f7;
+  --secondary-foreground: #16283e;
+  --muted: #edf2f7;
+  --muted-foreground: #627186;
+  --accent: #e7f2f9;
+  --accent-foreground: #085e93;
+  --border: #dfe6ee;
+  --input: #dfe6ee;
+  --ring: #087cbd;
+}
+
+:root.dark {
+  color-scheme: dark;
+  --background: #0d1520;
+  --foreground: #e5edf7;
+  --card: #111e2d;
+  --card-foreground: #e5edf7;
+  --popover: #111e2d;
+  --popover-foreground: #e5edf7;
+  --primary: #6cc6f1;
+  --primary-foreground: #0c2030;
+  --secondary: #1a2a3c;
+  --secondary-foreground: #e5edf7;
+  --muted: #1a2a3c;
+  --muted-foreground: #9baec3;
+  --accent: #19354a;
+  --accent-foreground: #99dcfb;
+  --border: #2a3b4f;
+  --input: #2a3b4f;
+  --ring: #6cc6f1;
+}
+
+/* The supplied PNGs include transparent margins. Frame them without changing
+   the source assets, keeping the full symbol and wordmark visible. */
+.brand-logo {
+  position: relative;
+  display: block;
+  width: 168px;
+  height: 48px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.brand-logo img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 122%;
+  max-width: none;
+  height: auto;
+  transform: translate(-50%, -50%);
+}
+
+@media (min-width: 1024px) {
+  .brand-logo {
+    width: 184px;
+    height: 52px;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
