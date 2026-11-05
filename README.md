@@ -103,6 +103,16 @@ real media-query events, panel resizing, keyboard/focus behavior, and appearance
 across viewport sizes and themes require separate browser checks. Run lint and
 build separately; tests do not replace them.
 
+## Web Analytics deployment
+
+Enable **Web Analytics** in the Vercel project dashboard, then redeploy to start
+production visitor and page-view collection. The app mounts Vercel's React
+analytics component once with its defaults; development mode does not send
+analytics. No custom events are configured.
+
+See the [Vercel Web Analytics quickstart](https://vercel.com/docs/analytics/quickstart)
+for setup details.
+
 ## Limitations and privacy
 
 - Schemas must be self-contained and contain at least one message type. Imports
@@ -114,8 +124,12 @@ build separately; tests do not replace them.
   precision. Bytes use Base64, and decoded absent fields are omitted from JSON.
 - This is a payload inspection tool, not a gRPC client or message store.
   Workspace inputs and results are not persisted across page reloads.
-- Conversion does not upload schemas or payloads. Copying a result writes it to
-  the system clipboard. Base64 is an encoding, not encryption.
+- Conversion inputs remain local. Vercel Web Analytics collects visitor and
+  page-view metadata on enabled production deployments; no schemas, field values,
+  or payloads are passed as custom events. See
+  [Vercel's privacy policy](https://vercel.com/legal/privacy-policy).
+- Copying a result writes it to the system clipboard. Base64 is an encoding,
+  not encryption.
 
 ## License
 
