@@ -198,3 +198,170 @@
     @apply font-sans;
   }
 }
+
+/* Workspace surfaces use the same tokens as the header in both themes. */
+.workspace-panel {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  box-shadow: 0 3px 12px #102a4310;
+}
+
+.panel-heading {
+  display: flex;
+  min-height: 52px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.step-number {
+  display: flex;
+  width: 23px;
+  height: 23px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--primary) 18%, transparent);
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--primary);
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.workspace-control {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  border: 1px solid var(--input);
+  border-radius: 7px;
+  background: var(--card);
+  padding: 9px 10px;
+  color: var(--foreground);
+  font-size: 12px;
+  outline: none;
+  transition:
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.workspace-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 15%, transparent);
+}
+
+.workspace-control:read-only,
+.workspace-control:disabled {
+  background: color-mix(in srgb, var(--muted) 40%, var(--card));
+}
+
+.workspace-button {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  transition:
+    background-color 150ms,
+    color 150ms,
+    border-color 150ms;
+}
+
+.workspace-button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+.workspace-button:disabled {
+  cursor: default;
+}
+
+.result-empty {
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--border) 65%, transparent) 0.7px,
+    transparent 0.7px
+  );
+  background-size: 16px 16px;
+}
+
+.workspace-separator {
+  position: relative;
+  display: flex;
+  width: 16px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  color: var(--muted-foreground);
+  outline: none;
+  transition:
+    color 150ms,
+    background-color 150ms;
+}
+
+.workspace-separator::before {
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: calc(50% - 0.5px);
+  width: 1px;
+  background: color-mix(in srgb, var(--border) 75%, transparent);
+  content: "";
+  pointer-events: none;
+}
+
+.workspace-separator > svg {
+  position: relative;
+  box-sizing: content-box;
+  padding-block: 5px;
+  background: var(--background);
+  pointer-events: none;
+}
+
+.workspace-separator:hover,
+.workspace-separator[data-separator="active"],
+.workspace-separator:focus-visible {
+  background: var(--accent);
+  color: var(--primary);
+}
+
+.workspace-separator:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--ring);
+}
+.schema-lines {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .workspace-group {
+    /* Budget for the compact title, toolbar, footer, and existing site header.
+       Short windows scroll the page rather than clipping panel controls. */
+    height: clamp(560px, calc(100svh - 348px), 940px);
+  }
+  .workspace-panel {
+    height: 100%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .schema-lines {
+    display: block;
+    overflow: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workspace-control,
+  .workspace-button,
+  .workspace-separator {
+    transition: none;
+  }
+}

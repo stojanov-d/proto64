@@ -1,9 +1,9 @@
 import * as React from "react";
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
 import { XIcon } from "lucide-react";
-import { cn } from "cn";
+import { cn } from "@/utils/cn";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/ui/button";
 
 // shadcn's Base UI Sheet, with larger touch targets and reduced-motion support.
 function Sheet(props: SheetPrimitive.Root.Props) {

@@ -5,7 +5,7 @@ import darkLogo from "@/assets/dark-theme-logo.png";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useNavigation } from "@/hooks/use-navigation";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -13,7 +13,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "@/ui/sheet";
 
 const references = [
   {

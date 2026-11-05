@@ -43,3 +43,6 @@ coverage/
 
 # Misc
 *.tsbuildinfo
+
+# Local refactor progress
+.slim/deepwork/

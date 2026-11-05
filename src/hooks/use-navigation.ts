@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 
 import { useIsDesktop } from "@/hooks/use-media-query";
-import { useNavigationStore } from "@/stores/navigation";
-import type { NavigationState } from "@/types/navigation";
+import { useNavigationStore, type NavigationState } from "@/stores/navigation";
 
 export function useNavigation(): NavigationState {
   const menuOpen = useNavigationStore((state) => state.menuOpen);
