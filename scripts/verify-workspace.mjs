@@ -31,6 +31,7 @@ test("initial sample preserves all values, including the 64-bit identifier", () 
   const person = getMessageType(parseSchema(EXAMPLE).root, "example.Person");
   const draft = makeDraft(person, SAMPLE);
   assert.equal(draft.accountId.text, "9007199254740993");
+  assert.equal(draft.address.text, '{\n  "city": "London",\n  "country": "UK"\n}');
   assert.deepEqual(readDraft(person, draft), SAMPLE);
   assert.deepEqual(decodeMessage(person, encodeMessage(person, readDraft(person, draft))), SAMPLE);
 });

@@ -76,6 +76,20 @@ export function Workspace() {
     />
   );
 
+  let announcement: string;
+  if (parsed.error) {
+    announcement = "Invalid schema. Fix the schema to continue.";
+  } else if (error) {
+    announcement =
+      "Conversion failed. Check the error above the conversion button.";
+  } else if (result !== null) {
+    announcement = `${mode === "encode" ? "Encoding" : "Decoding"} complete.`;
+  } else if (resultChanged) {
+    announcement = "Inputs changed—convert again";
+  } else {
+    announcement = "Ready to convert.";
+  }
+
   return (
     <main
       id="main-content"
@@ -99,15 +113,7 @@ export function Workspace() {
         </p>
       </footer>
       <p className="sr-only" role="status">
-        {parsed.error
-          ? "Invalid schema. Fix the schema to continue."
-          : error
-            ? "Conversion failed. Check the error above the conversion button."
-            : result !== null
-              ? `${mode === "encode" ? "Encoding" : "Decoding"} complete.`
-              : resultChanged
-                ? "Inputs changed—convert again"
-                : "Ready to convert."}
+        {announcement}
       </p>
     </main>
   );

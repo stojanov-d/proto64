@@ -10,16 +10,20 @@ export function makeDraft(type: Type, values?: Record<string, unknown>): Draft {
   return Object.fromEntries(
     type.fieldsArray.map((field) => {
       const value = values?.[field.name];
+      const hasValue = value !== undefined && value !== null;
+      let text: string;
+      if (!hasValue) {
+        text = defaultText(field);
+      } else if (complex(field)) {
+        text = JSON.stringify(value, null, 2);
+      } else {
+        text = String(value);
+      }
       return [
         field.name,
         {
-          included: (value !== undefined && value !== null) || field.required,
-          text:
-            value === undefined || value === null
-              ? defaultText(field)
-              : complex(field)
-                ? JSON.stringify(value, null, 2)
-                : String(value),
+          included: hasValue || field.required,
+          text,
         },
       ];
     }),

@@ -1,9 +1,10 @@
 # proto64
 
 A browser-based workspace for composing and inspecting Protocol Buffers payloads.
-All conversion happens locally; schemas and message data are not uploaded.
+Define a schema, encode field values to Base64, or decode a payload into readable
+JSON. Schemas and message data are processed locally in your browser, not uploaded.
 
-## Workflows
+## Features and workflows
 
 - **Encode:** edit a self-contained `.proto` schema, choose a message type, and
   fill in the generated fields. Encode the message to standard Base64 and copy
@@ -19,11 +20,11 @@ Desktop panels resize by dragging the two dividers, or by focusing a divider and
 using the arrow keys. On smaller screens the panels stack in workflow order.
 Both light and dark themes are supported.
 
-## Field values
+### Field values
 
 Field controls follow the schema. Check the box beside a field name to send it,
-or edit its value to include it automatically. Unchecked fields are marked **Omitted** and
-retain protobuf defaults. Zero, false, and empty strings are valid inputs.
+or edit its value to include it automatically. Unchecked fields are marked
+**Omitted** and are not sent. Zero, false, and empty strings are valid inputs.
 Required fields stay included; selecting one oneof member clears its siblings.
 Field names use protobufjs's camel casing (`account_id` becomes `accountId`).
 Decoded fields show **Present** or **Default**; Default means the field is absent
@@ -38,54 +39,53 @@ Changing the schema resets field values. Changing any input, message type, or
 mode clears the previous result. An empty message may validly encode to an empty
 Base64 string. Errors leave inputs editable so you can correct and retry.
 
-Schemas must contain all their definitions; imports are not loaded. This tool
-prepares payloads, not network requests; it does not send gRPC requests. Use the
-correct schema and message type: protobuf bytes do not identify their own type.
+## Getting started
 
-## Development
-
-React 19, TypeScript, Vite, Tailwind CSS 4, shadcn/Base UI, protobufjs, and
-react-resizable-panels. No editor CDN is required: the schema editor is an
-accessible textarea.
-
-With Node.js compatible with Vite 8 and pnpm installed:
+Install **Node.js 24 LTS** and **pnpm**, then run:
 
 ```sh
 pnpm install
 pnpm dev
 ```
 
+Open the local URL printed by Vite. The schema editor is an accessible textarea;
+no editor CDN is required.
+
+## Development
+
+Built with React 19, TypeScript, Vite 8, Tailwind CSS 4, shadcn/Base UI,
+protobufjs, Zustand, and react-resizable-panels.
+
 ```sh
+pnpm dev     # Start the development server
 pnpm build   # TypeScript check and production bundle
 pnpm lint    # ESLint
 pnpm test    # Protobuf, workspace model, and workspace transition checks
 pnpm preview # Serve the production bundle after building
 ```
 
-### Project organization
+### Architecture
 
-- `src/ui/`: shared shadcn/Base UI primitives and their supporting UI utilities.
-- `src/components/`: shared application chrome, such as the header and navigation.
-- `src/features/workspace/`: workspace composition, with presentation panels in
-  `components/` and feature-owned draft helpers, field metadata, example data, and
-  types in `model/`.
-- `src/hooks/`: workspace state and orchestration hooks alongside reusable hooks.
-  Workspace state stays local to its mounted workspace rather than in a global
-  store.
-- `src/stores/`: shared Zustand navigation state.
-- `src/utils/`: generic helpers, not workspace-specific domain logic.
-- `src/lib/protobuf.ts`: the protobuf domain boundary for schema reflection,
-  validation, and Base64 encoding/decoding. Workspace code delegates protobuf
-  validation to this module rather than duplicating its rules.
+| Path | Responsibility |
+| --- | --- |
+| `src/App.tsx` | Composes the shared header and workspace. |
+| `src/features/workspace/workspace.tsx` | Connects workspace state to the panels and layout. |
+| `src/features/workspace/components/` | Schema, input, and result panels; generated field controls, toolbar, and responsive layout. |
+| `src/features/workspace/model/` | Draft conversion, field metadata, example data, and workspace types. |
+| `src/hooks/` | Page-local workspace state/handlers, responsive subscriptions, and reusable hooks. |
+| `src/components/` | Shared application chrome: site header and theme toggle. |
+| `src/ui/` | Shared shadcn/Base UI button and sheet primitives. |
+| `src/stores/` | Shared Zustand navigation state; workspace state stays local to its hook. |
+| `src/utils/` | Generic helpers, including `cn.ts` for class names and `breakpoints.ts` for shared breakpoints. |
+| `src/lib/protobuf.ts` | Protobuf domain boundary: schema reflection, value/wire validation, and Base64 encoding/decoding. |
+| `src/index.css` | Theme tokens and application styles. |
 
-### Verification
+### Tests
 
-Use Node.js 24 LTS for these tests; they have been verified with **v24.11.0**.
-The suites import TypeScript files directly using Node's built-in TypeScript
-stripping. The transition suite also uses `stripTypeScriptTypes` from
-`node:module`, which may emit an experimental API warning on this runtime.
-No separate TypeScript loader or new dependencies are required for these checks
-or the organization refactor.
+The suites use Node's built-in test runner and TypeScript stripping, with no
+separate loader or test dependencies. They have been verified with Node
+**v24.11.0**. The transition suite also uses `node:module`'s
+`stripTypeScriptTypes`, which may emit an experimental API warning on this runtime.
 
 `pnpm test` runs three suites in order and stops on the first failure:
 
@@ -93,14 +93,30 @@ or the organization refactor.
    precision, required fields, and invalid schemas, values, Base64, and wire data.
 2. `scripts/verify-workspace.mjs`: draft defaults and presence, field metadata,
    scalar/JSON parsing, 64-bit precision, and oneof exclusion.
-3. `scripts/verify-workspace-transitions.mjs`: extracted workspace handlers,
+3. `scripts/verify-workspace-transitions.mjs`: workspace handlers,
    schema/type selection, invalidation, mode seeding, reset, pending clipboard
    revision guards, and responsive subscription/snapshot behavior.
 
-These are Node characterization tests, not browser or rendered-UI tests. The
-transition suite uses a small synchronous hook runner; it does not establish
-React scheduling or StrictMode behavior. Browser clipboard permissions, actual
-media-query events and panel resizing, keyboard/focus interactions, and visual
-equivalence across viewport sizes and themes need separate browser checks.
-Run `pnpm lint` and `pnpm build` separately for linting, TypeScript checking, and
-production bundling; `pnpm test` does not replace those checks.
+These are characterization tests, not rendered-UI tests. The synchronous hook
+runner does not validate React scheduling or StrictMode. Clipboard permissions,
+real media-query events, panel resizing, keyboard/focus behavior, and appearance
+across viewport sizes and themes require separate browser checks. Run lint and
+build separately; tests do not replace them.
+
+## Limitations and privacy
+
+- Schemas must be self-contained and contain at least one message type. Imports
+  are unsupported; include all definitions in the schema editor.
+- Decoding requires the matching schema and message type. Protobuf bytes do not
+  identify their own type, and a successful decode alone does not prove a match.
+- Keep 64-bit integers quoted in JSON. Unsafe integer numbers are rejected rather
+  than silently rounded; floating-point fields still use JavaScript number
+  precision. Bytes use Base64, and decoded absent fields are omitted from JSON.
+- This is a payload inspection tool, not a gRPC client or message store.
+  Workspace inputs and results are not persisted across page reloads.
+- Conversion does not upload schemas or payloads. Copying a result writes it to
+  the system clipboard. Base64 is an encoding, not encryption.
+
+## License
+
+Licensed under the [MIT License](LICENSE). Copyright (c) 2026 proto64 contributors.
